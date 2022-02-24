@@ -660,6 +660,8 @@ class AircraftConflictGenerator:
             for flight in package.flights:
                 logging.info(f"Generating flight: {flight.unit_type}")
                 group = self.generate_planned_flight(flight.from_cp, country, flight)
+                if group is None:
+                    continue
                 self.unit_map.add_aircraft(group, flight)
                 self.setup_flight_group(group, package, flight, dynamic_runways)
                 self.create_waypoints(group, package, flight)
@@ -766,7 +768,7 @@ class AircraftConflictGenerator:
         name = namegen.next_aircraft_name(country, cp.id, flight)
         group: FlyingGroup[Any]
         try:
-            if flight.start_type == "In Flight":
+            if flight.start_type == "In Flight" and country.name != 'Russia':
                 group = self._generate_inflight(
                     name=name, side=country, flight=flight, origin=cp
                 )
@@ -818,11 +820,11 @@ class AircraftConflictGenerator:
                 "No room on runway or parking slots. Starting from the air."
             )
             flight.start_type = "In Flight"
-            group = self._generate_inflight(
-                name=name, side=country, flight=flight, origin=cp
-            )
-            group.points[0].alt = 1500
-            return group
+            # group = self._generate_inflight(
+            #     name=name, side=country, flight=flight, origin=cp
+            # )
+            # group.points[0].alt = 1500
+            # return group
 
     @staticmethod
     def set_reduced_fuel(
