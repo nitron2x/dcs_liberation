@@ -820,11 +820,12 @@ class AircraftConflictGenerator:
                 "No room on runway or parking slots. Starting from the air."
             )
             flight.start_type = "In Flight"
-            # group = self._generate_inflight(
-            #     name=name, side=country, flight=flight, origin=cp
-            # )
-            # group.points[0].alt = 1500
-            # return group
+            if "Not enough helipads" in e.args[0]:
+                group = self._generate_inflight(
+                    name=name, side=country, flight=flight, origin=cp
+                )
+                group.points[0].alt = 1500
+                return group
 
     @staticmethod
     def set_reduced_fuel(
